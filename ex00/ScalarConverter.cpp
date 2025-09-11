@@ -170,6 +170,13 @@ void convertFloat(const std::string& literal) {
 			std::cout << "char: " << c << std::endl;
 		}
 	}
+
+	int i = static_cast<int>(value);
+	if (isOutOfIntLimits(i) || i != value) {
+		std::cout << "int: impossible" << std::endl;
+	} else {
+		std::cout << "int: " << i <<std::endl;
+	}
 }
 
 void convertDouble(const std::string& literal) {
