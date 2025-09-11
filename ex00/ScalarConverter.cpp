@@ -4,29 +4,96 @@ ScalarConverter::ScalarConverter(void) {}
 
 ScalarConverter::~ScalarConverter(void) {}
 
-literalType getLiteralType(std::string& literal) {
+bool checkStringBounds(const std::string& str, size_t size) {
+
+	return (std::isdigit(static_cast<unsigned char>(str[0])) && std::isdigit(static_cast<unsigned char>(str[size - 1])));
+}
+
+bool isValidNumericString(const std::string& literal, size_t size) {
+
+	bool isDot = false;
+
+	for (size_t i = 0; i < size; ++i) {
+		if (literal[i] == '.') {
+			if (!isDot) {
+				isDot = true;
+				continue ;
+			} else if (isDot) {
+				return (false);
+			}
+		}
+		else if (!std::isdigit(static_cast<unsigned char>(literal[i]))) {
+			return (false);
+		}
+	}
+	return (true);
+}
+
+literalType defineFLoatOrDouble(const std::string& literal, size_t pos) {
+
+	size_t lastPoint = literal.find_last_of('.');
+	if (lastPoint != pos) {
+		return (UNKNOWN);
+	}
+
+	size_t size = literal.size();
+	if (literal[size - 1] == 'f') {
+		std::string litNoSufix = literal.substr(0, size -1);
+		if (!checkStringBounds(litNoSufix, litNoSufix.size())) {
+			return (UNKNOWN);
+		} else {
+			return (isValidNumericString(litNoSufix, litNoSufix.size()) ? FLOAT : DOUBLE);
+		}
+	} else {
+		if (!checkStringBounds(literal, size)) {
+			return (UNKNOWN);
+		} else {
+			return (isValidNumericString(literal, size )? DOUBLE : UNKNOWN);
+		}
+	}
+	return (UNKNOWN);
+}
+
+literalType getLiteralType(const std::string& literal) {
 
 	if (literal.size() == 1 && (!std::isdigit(static_cast<unsigned char>(literal[0]))))
 		return (CHAR);
+
+	size_t pos = literal.find_first_of('.');
+	if (pos != std::string::npos) {
+		return (defineFLoatOrDouble(literal, pos));
+	} else {
+		for (size_t i = 0; i < literal.size(); ++i) {
+			if (!std::isdigit(static_cast<unsigned char>(literal[i]))) {
+				return (UNKNOWN);
+			}
+		}
+		return (INT);
+	}
+	return (UNKNOWN);
 }
 
-void convertFloat(std::string& literal) {
-
+void convertFloat(const std::string& literal) {
+	(void)literal;
+	std::cout << "This is a float!" << std::endl;
 }
 
-void convertInt(std::string& literal) {
-
+void convertInt(const std::string& literal) {
+	(void)literal;
+	std::cout << "This is an int!" << std::endl;
 }
 
-void convertDouble(std::string& literal) {
-
+void convertDouble(const std::string& literal) {
+	(void)literal;
+	std::cout << "This is a double!" << std::endl;
 }
 
-void convertChar(std::string& literal) {
-
+void convertChar(const std::string& literal) {
+	(void)literal;
+	std::cout << "This is a char!" << std::endl;
 }
 
-void ScalarConverter::convert(std::string& literal) {
+void ScalarConverter::convert(const std::string& literal) {
 
 	if (literal.empty()) {
 		std::cerr << "Error: literal can't be empty." << std::endl;
@@ -43,5 +110,8 @@ void ScalarConverter::convert(std::string& literal) {
 			return (convertFloat(literal));
 		case DOUBLE:
 			return (convertDouble(literal));
+		case UNKNOWN:
+			std::cerr << "Error unknown litteral type used." << std::endl;
+			return ;
 	}
 }

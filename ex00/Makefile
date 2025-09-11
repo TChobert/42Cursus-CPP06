@@ -29,7 +29,8 @@ endif
 
 ## SOURCES ##
 
-SRCS += megaphone.cpp
+SRCS += main.cpp
+SRCS += ScalarConverter.cpp
 
 ## OBJECTS ##
 
