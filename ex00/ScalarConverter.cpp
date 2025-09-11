@@ -16,6 +16,18 @@ bool isOutOfIntLimits(const long& value) {
 	return (value < -2147483648 || value > 2147483647);
 }
 
+bool isDoubleOverflow(const std::string& value) {
+
+	double convValue = strtod(value.c_str(), NULL);
+	if (std::isnan(convValue) || std::isinf(convValue)) {
+		return (true);
+	}
+	if (convValue > std::numeric_limits<double>::max() || convValue < -std::numeric_limits<double>::max()) {
+		return (true);
+	}
+	return (false);
+}
+
 bool checkStringBounds(const std::string& str, size_t size) {
 
 	if (!std::isdigit(static_cast<unsigned char>(str[0]))) {
@@ -94,11 +106,12 @@ literalType getLiteralType(const std::string& literal) {
 
 void convertInt(const std::string& literal) {
 
-	long value = std::atol(literal.c_str());
-	if (isOutOfIntLimits(value)) {
+	long longValue = std::atol(literal.c_str());
+	if (isOutOfIntLimits(longValue)) {
 		std::cerr << "Error: value is out of int limits" << std::endl;
 		return ;
 	}
+	int value = static_cast<int>(longValue);
 	if (isOutOfCharLimits(value)) {
 		std::cout << "char: impossible" << std::endl;
 	} else {
@@ -109,6 +122,12 @@ void convertInt(const std::string& literal) {
 			std::cout << "char: non printable" << std::endl;
 	}
 	std::cout << "int: " << value << std::endl;
+	if (isDoubleOverflow(literal)) {
+		std::cout << "double: impossible" << std::endl;
+	} else {
+		double d = static_cast<double>(value);
+		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
+	}
 }
 
 void convertFloat(const std::string& literal) {
