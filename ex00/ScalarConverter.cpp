@@ -6,14 +6,19 @@ ScalarConverter::~ScalarConverter(void) {}
 
 bool checkStringBounds(const std::string& str, size_t size) {
 
-	return (std::isdigit(static_cast<unsigned char>(str[0])) && std::isdigit(static_cast<unsigned char>(str[size - 1])));
+	if (!std::isdigit(static_cast<unsigned char>(str[0]))) {
+		if (str[0] != '+' && str[0] != '-')
+			return (false);
+	}
+	return (std::isdigit(static_cast<unsigned char>(str[size - 1])));
 }
 
 bool isValidNumericString(const std::string& literal, size_t size) {
 
 	bool isDot = false;
+	size_t start = (literal[0] == '+' || literal[0] == '-') ? 1 : 0;
 
-	for (size_t i = 0; i < size; ++i) {
+	for (size_t i = start; i < size; ++i) {
 		if (literal[i] == '.') {
 			if (!isDot) {
 				isDot = true;
@@ -42,7 +47,7 @@ literalType defineFLoatOrDouble(const std::string& literal, size_t pos) {
 		if (!checkStringBounds(litNoSufix, litNoSufix.size())) {
 			return (UNKNOWN);
 		} else {
-			return (isValidNumericString(litNoSufix, litNoSufix.size()) ? FLOAT : DOUBLE);
+			return (isValidNumericString(litNoSufix, litNoSufix.size()) ? FLOAT : UNKNOWN);
 		}
 	} else {
 		if (!checkStringBounds(literal, size)) {
@@ -63,7 +68,9 @@ literalType getLiteralType(const std::string& literal) {
 	if (pos != std::string::npos) {
 		return (defineFLoatOrDouble(literal, pos));
 	} else {
-		for (size_t i = 0; i < literal.size(); ++i) {
+		if (!checkStringBounds(literal, literal.size()))
+			return (UNKNOWN);
+		for (size_t i = 1; i < literal.size(); ++i) {
 			if (!std::isdigit(static_cast<unsigned char>(literal[i]))) {
 				return (UNKNOWN);
 			}
