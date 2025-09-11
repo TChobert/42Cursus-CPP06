@@ -137,24 +137,39 @@ void convertInt(const std::string& literal) {
 
 	std::cout << "int: " << value << std::endl;
 
-	if (isDoubleOverflow(literal)) {
-		std::cout << "double: impossible" << std::endl;
-	} else {
-		double d = static_cast<double>(value);
-		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
-	}
-
 	if (isFloatOverflow(literal)) {
 		std::cout << "float: impossible" << std::endl;
 	} else {
 		float f = static_cast<float>(value);
 		std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
 	}
+
+	if (isDoubleOverflow(literal)) {
+		std::cout << "double: impossible" << std::endl;
+	} else {
+		double d = static_cast<double>(value);
+		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
+	}
 }
 
 void convertFloat(const std::string& literal) {
-	(void)literal;
-	std::cout << "This is a float!" << std::endl;
+
+	if (isFloatOverflow(literal)) {
+		std::cerr << "Error: value is out of float limits" << std::endl;
+		return ;
+	}
+
+	float value = strtof(literal.c_str(), NULL);
+	if (value != static_cast<int>(value)) {
+		std::cout << "char: impossible" << std::endl;
+	} else {
+		char c = static_cast<char>(value);
+		if (isOutOfCharLimits(c)) {
+			std::cout << "char: impossible" << std::endl;
+		} else {
+			std::cout << "char: " << c << std::endl;
+		}
+	}
 }
 
 void convertDouble(const std::string& literal) {
