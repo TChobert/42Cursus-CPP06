@@ -5,7 +5,15 @@ ScalarConverter::ScalarConverter(void) {}
 ScalarConverter::~ScalarConverter(void) {}
 
 bool IsPrintable(const char& c) {
-	return (c >= 32);
+	return (c >= 32 && c <= 126);
+}
+
+bool isOutOfCharLimits(const long& value) {
+	return (value < 0 || value > 255);
+}
+
+bool isOutOfIntLimits(const long& value) {
+	return (value < -2147483648 || value > 2147483647);
 }
 
 bool checkStringBounds(const std::string& str, size_t size) {
@@ -84,14 +92,28 @@ literalType getLiteralType(const std::string& literal) {
 	return (UNKNOWN);
 }
 
+void convertInt(const std::string& literal) {
+
+	long value = std::atol(literal.c_str());
+	if (isOutOfIntLimits(value)) {
+		std::cerr << "Error: value is out of int limits" << std::endl;
+		return ;
+	}
+	if (isOutOfCharLimits(value)) {
+		std::cout << "char: impossible" << std::endl;
+	} else {
+		char c = static_cast<char>(value);
+		if (IsPrintable(c))
+			std::cout << "char: " << c << std::endl;
+		else
+			std::cout << "char: non printable" << std::endl;
+	}
+	std::cout << "int: " << value << std::endl;
+}
+
 void convertFloat(const std::string& literal) {
 	(void)literal;
 	std::cout << "This is a float!" << std::endl;
-}
-
-void convertInt(const std::string& literal) {
-	(void)literal;
-	std::cout << "This is an int!" << std::endl;
 }
 
 void convertDouble(const std::string& literal) {
