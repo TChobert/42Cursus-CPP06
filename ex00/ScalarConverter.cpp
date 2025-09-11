@@ -4,6 +4,10 @@ ScalarConverter::ScalarConverter(void) {}
 
 ScalarConverter::~ScalarConverter(void) {}
 
+bool IsPrintable(const char& c) {
+	return (c >= 32);
+}
+
 bool checkStringBounds(const std::string& str, size_t size) {
 
 	if (!std::isdigit(static_cast<unsigned char>(str[0]))) {
@@ -96,8 +100,22 @@ void convertDouble(const std::string& literal) {
 }
 
 void convertChar(const std::string& literal) {
-	(void)literal;
-	std::cout << "This is a char!" << std::endl;
+
+	char c = literal[0];
+
+	if (!IsPrintable(c)) {
+		std::cout << "char: Non displayable" << std::endl;
+	} else {
+		std::cout << "char: '" << c << "'" << std::endl;
+	}
+	int cInt = static_cast<int>(c);
+	std::cout << "int: " << cInt << std::endl;
+
+	float cFloat = static_cast<float>(c);
+	std::cout << "float: " << std::fixed << std::setprecision(1) << cFloat << "f" << std::endl;
+
+	double cDouble = static_cast<double>(c);
+	std::cout << "double: " << std::fixed << std::setprecision(1) << cDouble << std::endl;
 }
 
 void ScalarConverter::convert(const std::string& literal) {
