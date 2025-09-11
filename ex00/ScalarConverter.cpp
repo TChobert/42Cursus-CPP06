@@ -28,6 +28,18 @@ bool isDoubleOverflow(const std::string& value) {
 	return (false);
 }
 
+bool isFloatOverflow(const std::string& value) {
+
+	float f = strtof(value.c_str(), NULL);
+	if (std::isnan(f) || std::isinf(f)) {
+		return (true);
+	}
+	if (f > std::numeric_limits<float>::max() || f < -std::numeric_limits<float>::max()) {
+		return (true);
+	}
+	return (false);
+}
+
 bool checkStringBounds(const std::string& str, size_t size) {
 
 	if (!std::isdigit(static_cast<unsigned char>(str[0]))) {
@@ -111,6 +123,7 @@ void convertInt(const std::string& literal) {
 		std::cerr << "Error: value is out of int limits" << std::endl;
 		return ;
 	}
+
 	int value = static_cast<int>(longValue);
 	if (isOutOfCharLimits(value)) {
 		std::cout << "char: impossible" << std::endl;
@@ -121,12 +134,21 @@ void convertInt(const std::string& literal) {
 		else
 			std::cout << "char: non printable" << std::endl;
 	}
+
 	std::cout << "int: " << value << std::endl;
+
 	if (isDoubleOverflow(literal)) {
 		std::cout << "double: impossible" << std::endl;
 	} else {
 		double d = static_cast<double>(value);
 		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
+	}
+
+	if (isFloatOverflow(literal)) {
+		std::cout << "float: impossible" << std::endl;
+	} else {
+		float f = static_cast<float>(value);
+		std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
 	}
 }
 
