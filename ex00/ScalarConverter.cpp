@@ -221,7 +221,7 @@ void convertDouble(const std::string& literal) {
 		std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
 	}
 
-	std::cout << "Double: " << std::fixed << std::setprecision(1) << value << std::endl;
+	std::cout << "double: " << std::fixed << std::setprecision(1) << value << std::endl;
 }
 
 void convertChar(const std::string& literal) {
@@ -243,14 +243,47 @@ void convertChar(const std::string& literal) {
 	std::cout << "double: " << std::fixed << std::setprecision(1) << cDouble << std::endl;
 }
 
+void handleNan(void) {
+	std::cout << "char : impossible" << std::endl;
+	std::cout << "int : impossible" << std::endl;
+	std::cout << "float : nanf" << std::endl;
+	std::cout << "double : nan" << std::endl;
+}
+
+void handlePositiveInf(void) {
+	std::cout << "char : impossible" << std::endl;
+	std::cout << "int : impossible" << std::endl;
+	std::cout << "float : inff" << std::endl;
+	std::cout << "double : inf" << std::endl;
+}
+
+void handleNegativeInf(void) {
+	std::cout << "char : impossible" << std::endl;
+	std::cout << "int : impossible" << std::endl;
+	std::cout << "float : -inff" << std::endl;
+	std::cout << "double : -inf" << std::endl;
+}
+
 void ScalarConverter::convert(const std::string& literal) {
 
 	if (literal.empty()) {
 		std::cerr << "Error: literal can't be empty." << std::endl;
 	}
 
-	literalType type = getLiteralType(literal);
+	if (literal == "nanf" || literal == "nan") {
+		handleNan();
+		return ;
+	}
+	if (literal == "+inf" || literal == "+inff" || literal == "inf" || literal == "inff") {
+		handlePositiveInf();
+		return ;
+	}
+	if (literal == "-inf" || literal == "-iff") {
+		handleNegativeInf();
+		return ;
+	}
 
+	literalType type = getLiteralType(literal);
 	switch (type) {
 		case CHAR:
 			return (convertChar(literal));
