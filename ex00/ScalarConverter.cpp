@@ -298,3 +298,18 @@ void ScalarConverter::convert(const std::string& literal) {
 			return ;
 	}
 }
+
+ScalarConverter::ScalarConverter(const ScalarConverter& other) {
+	if (this != &other) {
+		std::cout << "";
+	}
+	std::cout << "ScalarConverter: copy constructor called" << std::endl;
+}
+
+ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other) {
+	if (this != &other) {
+		std::cout << "";
+	}
+	std::cout << "ScalarConverter: assigment operator called" << std::endl;
+	return *this;
+}
