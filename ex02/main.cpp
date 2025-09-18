@@ -1,49 +1,44 @@
 #include <iostream>
 #include "Base.hpp"
 
-// Prototypes des fonctions
-Base* generate(void);
-void identify(Base* p);
-void identify(Base& p);
-
 int main() {
-    // On fait plusieurs générations pour tester les cas
-    for (int i = 0; i < 10; i++) {
-        std::cout << "=== Test " << i + 1 << " ===" << std::endl;
 
-        Base* obj = generate();
-        if (!obj) {
-            std::cout << "generate() a retourné NULL" << std::endl;
-            continue;
-        }
+	std::srand(std::time(0));
+	for (int i = 0; i < 10; i++) {
+		std::cout << "=== Test " << i + 1 << " ===" << std::endl;
 
-        std::cout << "Avec pointeur : ";
-        identify(obj);
+		Base* obj = generate();
+		if (!obj) {
+			std::cout << "generate() returned NULL" << std::endl;
+			continue;
+		}
 
-        std::cout << "Avec référence : ";
-        identify(*obj);
+		std::cout << "With POINTER : ";
+		identify(obj);
 
-        delete obj; // libérer la mémoire
-        std::cout << std::endl;
-    }
+		std::cout << "With REFERENCE : ";
+		identify(*obj);
 
-    // Test manuel avec instanciations directes
-    std::cout << "=== Tests manuels ===" << std::endl;
-    A a;
-    B b;
-    C c;
+		delete obj;
+		std::cout << std::endl;
+	}
 
-    std::cout << "Objet A -> ";
-    identify(&a);
-    identify(a);
+	std::cout << "=== Manual testing ===" << std::endl;
+	A a;
+	B b;
+	C c;
 
-    std::cout << "Objet B -> ";
-    identify(&b);
-    identify(b);
+	std::cout << "Objet A -> ";
+	identify(&a);
+	identify(a);
 
-    std::cout << "Objet C -> ";
-    identify(&c);
-    identify(c);
+	std::cout << "Objet B -> ";
+	identify(&b);
+	identify(b);
 
-    return 0;
+	std::cout << "Objet C -> ";
+	identify(&c);
+	identify(c);
+
+	return (EXIT_SUCCESS);
 }

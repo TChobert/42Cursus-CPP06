@@ -35,7 +35,22 @@ void identify(Base* p) {
 
 void identify(Base& p) {
 
-	uintptr_t b = reinterpret_cast<uintptr_t>(&p);
-	Base *ptr = reinterpret_cast<Base*>(b);
-	return (identify(ptr));
+	try {
+		A& a = dynamic_cast<A&>(p);
+		std::cout << "Type A" << std::endl;
+		(void)a;
+		return ;
+	} catch (std::bad_cast&) {}
+	try {
+		B& b = dynamic_cast<B&>(p);
+		std::cout << "Type B" << std::endl;
+		(void)b;
+		return ;
+	} catch (std::bad_cast&) {}
+	try {
+		C& c = dynamic_cast<C&>(p);
+		std::cout << "Type C" << std::endl;
+		(void)c;
+		return ;
+	} catch (std::bad_cast&) {}
 }

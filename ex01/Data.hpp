@@ -10,6 +10,7 @@ class Data {
 	public:
 
 	Data(void);
+	Data(const Data& other);
 	~Data(void);
 	Data& operator=(const Data& other);
 

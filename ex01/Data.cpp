@@ -4,6 +4,11 @@ Data::Data(void) {}
 
 Data::~Data(void) {}
 
+Data::Data(const Data& other) {
+	_letter = other._letter;
+	_number = other._number;
+}
+
 Data& Data::operator=(const Data& other) {
 	if (this != &other) {
 		this->_letter = other._letter;

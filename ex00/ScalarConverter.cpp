@@ -9,11 +9,11 @@ bool IsPrintable(const char& c) {
 }
 
 bool isOutOfCharLimits(const long& value) {
-	return (value < 0 || value > 255);
+	return (value < std::numeric_limits<unsigned char>::min() || value > std::numeric_limits<unsigned char>::max());
 }
 
 bool isOutOfIntLimits(const long& value) {
-	return (value < -2147483648 || value > 2147483647);
+	return (value < std::numeric_limits<int>::min() || value > std::numeric_limits<int>::max());
 }
 
 bool isDoubleOverflow(const std::string& value) {
@@ -42,6 +42,8 @@ bool isFloatOverflow(const std::string& value) {
 
 bool checkStringBounds(const std::string& str, size_t size) {
 
+	if (str.empty())
+		return (false);
 	if (!std::isdigit(static_cast<unsigned char>(str[0]))) {
 		if (str[0] != '+' && str[0] != '-')
 			return (false);
@@ -118,36 +120,35 @@ literalType getLiteralType(const std::string& literal) {
 
 void convertInt(const std::string& literal) {
 
-	long longValue = std::atol(literal.c_str());
+	long double longValue = std::strtold(literal.c_str(), NULL);
 	if (isOutOfIntLimits(longValue)) {
-		std::cerr << "Error: value is out of int limits" << std::endl;
-		return ;
-	}
-
-	int value = static_cast<int>(longValue);
-	if (isOutOfCharLimits(value)) {
 		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
 	} else {
-		char c = static_cast<char>(value);
-		if (IsPrintable(c))
-			std::cout << "char: " << c << std::endl;
-		else
-			std::cout << "char: non printable" << std::endl;
+		int value = static_cast<int>(longValue);
+		if (isOutOfCharLimits(static_cast<long>(value))) {
+			std::cout << "char: impossible" << std::endl;
+		} else {
+			char c = static_cast<char>(value);
+			if (IsPrintable(c))
+				std::cout << "char: " << c << std::endl;
+			else
+				std::cout << "char: Non displayable" << std::endl;
+		}
+		std::cout << "int: " << value << std::endl;
 	}
-
-	std::cout << "int: " << value << std::endl;
 
 	if (isFloatOverflow(literal)) {
 		std::cout << "float: impossible" << std::endl;
 	} else {
-		float f = static_cast<float>(value);
+		float f = static_cast<float>(longValue);
 		std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
 	}
 
 	if (isDoubleOverflow(literal)) {
 		std::cout << "double: impossible" << std::endl;
 	} else {
-		double d = static_cast<double>(value);
+		double d = static_cast<double>(longValue);
 		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
 	}
 }
@@ -155,35 +156,37 @@ void convertInt(const std::string& literal) {
 void convertFloat(const std::string& literal) {
 
 	if (isFloatOverflow(literal)) {
-		std::cerr << "Error: value is out of float limits" << std::endl;
-		return ;
-	}
-
-	float value = strtof(literal.c_str(), NULL);
-	if (value != static_cast<int>(value)) {
 		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
+		std::cout << "float: impossible" << std::endl;
 	} else {
-		char c = static_cast<char>(value);
-		if (isOutOfCharLimits(c)) {
+		float value = strtof(literal.c_str(), NULL);
+		if (value != static_cast<int>(value)) {
 			std::cout << "char: impossible" << std::endl;
 		} else {
-			std::cout << "char: " << c << std::endl;
+			char c = static_cast<char>(value);
+			if (isOutOfCharLimits(static_cast<long>(c))) {
+				std::cout << "char: impossible" << std::endl;
+			} else {
+				if (IsPrintable(c))
+					std::cout << "char: " << c << std::endl;
+				else
+					std::cout << "char: Non displayable" << std::endl;
+			}
 		}
+		int i = static_cast<int>(value);
+		if (isOutOfIntLimits(value) || i != value) {
+			std::cout << "int: impossible" << std::endl;
+		} else {
+			std::cout << "int: " << i <<std::endl;
+		}
+		std::cout << "float: " << std::fixed << std::setprecision(1) << value << "f" << std::endl;
 	}
-
-	int i = static_cast<int>(value);
-	if (isOutOfIntLimits(value) || i != value) {
-		std::cout << "int: impossible" << std::endl;
-	} else {
-		std::cout << "int: " << i <<std::endl;
-	}
-
-	std::cout << "float: " << std::fixed << std::setprecision(1) << value << "f" << std::endl;
 
 	if (isDoubleOverflow(literal)) {
 		std::cout << "double: impossible" << std::endl;
 	} else {
-		double d = static_cast<double>(value);
+		double d = strtod(literal.c_str(), NULL);
 		std::cout << "double: " << std::fixed << std::setprecision(1) << d << std::endl;
 	}
 }
@@ -191,37 +194,42 @@ void convertFloat(const std::string& literal) {
 void convertDouble(const std::string& literal) {
 
 	if (isDoubleOverflow(literal)) {
-		std::cerr << "Error: value is out of double limits" << std::endl;
-		return ;
-	}
-
-	double value = strtod(literal.c_str(), NULL);
-	if (value != static_cast<int>(value)) {
 		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
+		std::cout << "float: impossible" << std::endl;
+		std::cout << "double: impossible" << std::endl;
 	} else {
-		char c = static_cast<char>(value);
-		if (isOutOfCharLimits(c)) {
+		double value = strtod(literal.c_str(), NULL);
+		if (value != static_cast<int>(value)) {
 			std::cout << "char: impossible" << std::endl;
 		} else {
-			std::cout << "char: " << c << std::endl;
+			char c = static_cast<char>(value);
+			if (isOutOfCharLimits(static_cast<long>(c))) {
+				std::cout << "char: impossible" << std::endl;
+			} else {
+				if (IsPrintable(c))
+					std::cout << "char: " << c << std::endl;
+				else
+					std::cout << "char: Non displayable" << std::endl;
+			}
 		}
-	}
 
-	int i = static_cast<int>(value);
-	if (isOutOfIntLimits(value) || i != value) {
-		std::cout << "int: impossible" << std::endl;
-	} else {
-		std::cout << "int: " << i << std::endl;
-	}
+		int i = static_cast<int>(value);
+		if (isOutOfIntLimits(value) || i != value) {
+			std::cout << "int: impossible" << std::endl;
+		} else {
+			std::cout << "int: " << i << std::endl;
+		}
 
-	if (isFloatOverflow(literal)) {
-		std::cout << "float: impossible" << std::endl;
-	} else {
-		float f = static_cast<float>(value);
-		std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
-	}
+		if (isFloatOverflow(literal)) {
+			std::cout << "float: impossible" << std::endl;
+		} else {
+			float f = static_cast<float>(value);
+			std::cout << "float: " << std::fixed << std::setprecision(1) << f << "f" << std::endl;
+		}
 
-	std::cout << "double: " << std::fixed << std::setprecision(1) << value << std::endl;
+		std::cout << "double: " << std::fixed << std::setprecision(1) << value << std::endl;
+	}
 }
 
 void convertChar(const std::string& literal) {
@@ -244,30 +252,31 @@ void convertChar(const std::string& literal) {
 }
 
 void handleNan(void) {
-	std::cout << "char : impossible" << std::endl;
-	std::cout << "int : impossible" << std::endl;
-	std::cout << "float : nanf" << std::endl;
-	std::cout << "double : nan" << std::endl;
+	std::cout << "char: impossible" << std::endl;
+	std::cout << "int: impossible" << std::endl;
+	std::cout << "float: nanf" << std::endl;
+	std::cout << "double: nan" << std::endl;
 }
 
 void handlePositiveInf(void) {
-	std::cout << "char : impossible" << std::endl;
-	std::cout << "int : impossible" << std::endl;
-	std::cout << "float : inff" << std::endl;
-	std::cout << "double : inf" << std::endl;
+	std::cout << "char: impossible" << std::endl;
+	std::cout << "int: impossible" << std::endl;
+	std::cout << "float: +inff" << std::endl;
+	std::cout << "double: +inf" << std::endl;
 }
 
 void handleNegativeInf(void) {
-	std::cout << "char : impossible" << std::endl;
-	std::cout << "int : impossible" << std::endl;
-	std::cout << "float : -inff" << std::endl;
-	std::cout << "double : -inf" << std::endl;
+	std::cout << "char: impossible" << std::endl;
+	std::cout << "int: impossible" << std::endl;
+	std::cout << "float: -inff" << std::endl;
+	std::cout << "double: -inf" << std::endl;
 }
 
 void ScalarConverter::convert(const std::string& literal) {
 
 	if (literal.empty()) {
 		std::cerr << "Error: literal can't be empty." << std::endl;
+		return ;
 	}
 
 	if (literal == "nanf" || literal == "nan") {
@@ -278,7 +287,7 @@ void ScalarConverter::convert(const std::string& literal) {
 		handlePositiveInf();
 		return ;
 	}
-	if (literal == "-inf" || literal == "-iff") {
+	if (literal == "-inf" || literal == "-inff") {
 		handleNegativeInf();
 		return ;
 	}
@@ -294,22 +303,7 @@ void ScalarConverter::convert(const std::string& literal) {
 		case DOUBLE:
 			return (convertDouble(literal));
 		case UNKNOWN:
-			std::cerr << "Error unknown litteral type used." << std::endl;
+			std::cerr << "Error: unknown litteral type." << std::endl;
 			return ;
 	}
-}
-
-ScalarConverter::ScalarConverter(const ScalarConverter& other) {
-	if (this != &other) {
-		std::cout << "";
-	}
-	std::cout << "ScalarConverter: copy constructor called" << std::endl;
-}
-
-ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other) {
-	if (this != &other) {
-		std::cout << "";
-	}
-	std::cout << "ScalarConverter: assigment operator called" << std::endl;
-	return *this;
 }
